@@ -8,6 +8,7 @@ import repository.impl.UserRepositoryImpl;
 import service.UserService;
 
 import java.util.List;
+import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
 
@@ -20,7 +21,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto getUserById(Long id) {
+    public Optional<UserResponseDto> getUserById(Long id) {
         return USER_REPOSITORY.findById(id);
     }
 

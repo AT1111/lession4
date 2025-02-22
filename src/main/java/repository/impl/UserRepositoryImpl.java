@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class UserRepositoryImpl implements UserRepository {
     private static final String ID = "id";
@@ -71,9 +72,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public UserResponseDto findById(Long id) {
+    public Optional<UserResponseDto> findById(Long id) {
         String sqlRequest = "SELECT id, email, phoneNumber, password FROM user WHERE id = ?";
-        UserResponseDto user = null;
+        Optional<UserResponseDto> user = Optional.empty();
 
         try (
             Connection connection = ConnectionUtil.getConnection();
@@ -82,7 +83,7 @@ public class UserRepositoryImpl implements UserRepository {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                user = toUserResponseDto(resultSet);
+                user = Optional.of(toUserResponseDto(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Can't to retrieve user by id. ID=" + id, e);

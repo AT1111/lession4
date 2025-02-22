@@ -18,7 +18,7 @@ public class Main {
 
         List<UserResponseDto> users = userService.getUsers();
         for (UserResponseDto user : users) {
-            System.out.println(userService.getUserById(user.id()));
+            System.out.println(userService.getUserById(user.id()).orElse(null));
         }
     }
 }

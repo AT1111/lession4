@@ -26,7 +26,7 @@ class UserServiceTest {
     void getUserByIdTest() {
         UserRegistrationDto userDto = new UserRegistrationDto("a1@gmail.com", "+23 121 312 324","12345", "12345");
         UserResponseDto userResponseDto = userService.registerUser(userDto);
-        Assertions.assertNotNull(userService.getUserById(userResponseDto.id()));
+        Assertions.assertNotNull(userService.getUserById(userResponseDto.id()).orElse(null));
     }
 
     @Test

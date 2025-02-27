@@ -1,6 +1,5 @@
 package repository.impl;
 
-import dto.UserResponseDto;
 import entity.User;
 import repository.UserRepository;
 import util.ConnectionUtil;
@@ -68,9 +67,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<UserResponseDto> findById(Long id) {
+    public Optional<User> findById(Long id) {
         String sqlRequest = "SELECT id, email, phoneNumber, password FROM user WHERE id = ?";
-        Optional<UserResponseDto> user = Optional.empty();
+        Optional<User> user = Optional.empty();
 
         try (
             Connection connection = ConnectionUtil.getConnection();
@@ -79,7 +78,7 @@ public class UserRepositoryImpl implements UserRepository {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                user = Optional.of(toUserResponseDto(resultSet));
+                user = Optional.of(toUser(resultSet));
             }
         } catch (SQLException e) {
             throw new EntityNotFoundException("Can't to retrieve user by id. ID=" + id);
@@ -123,18 +122,6 @@ public class UserRepositoryImpl implements UserRepository {
             String phoneNumber = requestResult.getString(PHONENUMBER);
             String password = requestResult.getString(PASSWORD);
             return new User(id, email, phoneNumber, password);
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't parse user data from resultSet", e);
-        }
-    }
-
-    private UserResponseDto toUserResponseDto(ResultSet requestResult) {
-        try {
-            Long id = requestResult.getLong(ID);
-            String email = requestResult.getString(EMAIL);
-            String phoneNumber = requestResult.getString(PHONENUMBER);
-            String password = requestResult.getString(PASSWORD);
-            return new UserResponseDto(id, email, phoneNumber, password);
         } catch (SQLException e) {
             throw new RuntimeException("Can't parse user data from resultSet", e);
         }

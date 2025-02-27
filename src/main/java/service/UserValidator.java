@@ -5,7 +5,7 @@ import dto.UserRegistrationDto;
 public class UserValidator {
     public static void validate(UserRegistrationDto userDto) {
         checkEmail(userDto.getEmail());
-        checkPhoneNumber(userDto.getPhoneNumberString());
+        checkPhoneNumber(userDto.getPhoneNumber());
         if (userDto.getPassword().isBlank()) {
             throw new RuntimeException("Password not set.");
         }

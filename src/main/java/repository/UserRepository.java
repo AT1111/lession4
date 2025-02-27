@@ -1,6 +1,5 @@
 package repository;
 
-import dto.UserResponseDto;
 import entity.User;
 
 import java.util.List;
@@ -11,7 +10,7 @@ public interface UserRepository {
 
     List<User> findAll();
 
-    Optional<UserResponseDto> findById(Long id);
+    Optional<User> findById(Long id);
 
     boolean deleteById(Long id);
 

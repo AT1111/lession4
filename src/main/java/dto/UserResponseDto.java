@@ -23,11 +23,11 @@ public record UserResponseDto(Long id, String email, String phoneNumber, String 
 
     @Override
     public String toString() {
-        return "UserResponseDto{" +
-            "id=" + id +
-            ", email='" + email + '\'' +
-            ", phoneNumber='" + phoneNumber + '\'' +
-            ", password='" + password + '\'' +
-            '}';
+        return "UserResponseDto{"
+            + "id=" + id
+            + ", email='" + email + '\''
+            + ", phoneNumber='" + phoneNumber + '\''
+            + ", password='" + password + '\''
+            + '}';
     }
 }

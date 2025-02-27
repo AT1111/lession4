@@ -16,6 +16,12 @@ public class User {
     private String phoneNumber;
     private String password;
 
+    public User(String email, String phoneNumber, String password) {
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+    }
+
     public UserResponseDto toUserResponseDto() {
         return new UserResponseDto(id, email, phoneNumber, password);
     }

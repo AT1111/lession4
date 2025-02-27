@@ -2,6 +2,8 @@ package com.lession4;
 
 import dto.UserRegistrationDto;
 import dto.UserResponseDto;
+import repository.UserRepository;
+import repository.impl.UserRepositoryImpl;
 import service.UserService;
 import service.impl.UserServiceImpl;
 
@@ -9,7 +11,8 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        UserService userService = new UserServiceImpl();
+        UserRepository userRepository = new UserRepositoryImpl();
+        UserService userService = new UserServiceImpl(userRepository);
 
         userService.deleteUsers();
 

@@ -11,7 +11,7 @@ public class ConnectionUtil {
     private static final Properties DB_PROPERTIES = new Properties();
 
     static {
-        DB_PROPERTIES.put("user", "root");
+        DB_PROPERTIES.put("user", "user");
         DB_PROPERTIES.put("password", "1");
         try {
             Class.forName(DRIVER_CLASS_NAME);

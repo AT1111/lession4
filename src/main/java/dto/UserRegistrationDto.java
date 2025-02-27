@@ -40,7 +40,7 @@ public class UserRegistrationDto {
         return phoneNumber.orElse("").replaceAll(" ", "");
     }
 
-    public User toUser(Long id) {
-        return new User(id, email, getPhoneNumberString(), password);
+    public User toUser() {
+        return new User(email, getPhoneNumberString(), password);
     }
 }

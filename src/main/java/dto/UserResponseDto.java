@@ -20,4 +20,14 @@ public record UserResponseDto(Long id, String email, String phoneNumber, String 
     public String password() {
         return password;
     }
+
+    @Override
+    public String toString() {
+        return "UserResponseDto{" +
+            "id=" + id +
+            ", email='" + email + '\'' +
+            ", phoneNumber='" + phoneNumber + '\'' +
+            ", password='" + password + '\'' +
+            '}';
+    }
 }

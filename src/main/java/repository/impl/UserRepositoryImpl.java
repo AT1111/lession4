@@ -1,12 +1,11 @@
 package repository.impl;
 
-import dto.UserRegistrationDto;
 import dto.UserResponseDto;
 import entity.User;
 import repository.UserRepository;
-import service.UserValidator;
 import util.ConnectionUtil;
 
+import javax.persistence.EntityNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,39 +22,36 @@ public class UserRepositoryImpl implements UserRepository {
     private static final String PASSWORD = "password";
 
     @Override
-    public User save(UserRegistrationDto dto) {
+    public User save(User user) {
         String sqlRequest = "INSERT INTO user (email, phoneNumber, password) VALUES (?, ?, ?)";
-        User user = null;
-
-        UserValidator.validate(dto);
 
         try (
             Connection connection = ConnectionUtil.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest,
                 Statement.RETURN_GENERATED_KEYS)
         ) {
-            preparedStatement.setString(1, dto.getEmail());
-            preparedStatement.setString(2, dto.getPhoneNumber().orElse(null));
-            preparedStatement.setString(3, dto.getPassword());
+            preparedStatement.setString(1, user.getEmail());
+            preparedStatement.setString(2, user.getPhoneNumber());
+            preparedStatement.setString(3, user.getPassword());
 
             int affectedRows = preparedStatement.executeUpdate();
             checkAffectedRowsNumber(affectedRows, 1);
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                user = dto.toUser(generatedKeys.getLong(1));
+                user.setId(generatedKeys.getLong(1));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Can't create instance of user:"
-                + dto
+                + user
                 + " and add it to DB", e);
         }
         return user;
     }
 
     @Override
-    public List<UserResponseDto> findAll() {
+    public List<User> findAll() {
         String sqlRequest = "SELECT id, email, phoneNumber, password FROM user";
-        List<UserResponseDto> users = new ArrayList<>();
+        List<User> users = new ArrayList<>();
 
         try (
             Connection connection = ConnectionUtil.getConnection();
@@ -63,7 +59,7 @@ public class UserRepositoryImpl implements UserRepository {
 
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                users.add(toUserResponseDto(resultSet));
+                users.add(toUser(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Can't to retrieve user data", e);
@@ -86,7 +82,7 @@ public class UserRepositoryImpl implements UserRepository {
                 user = Optional.of(toUserResponseDto(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Can't to retrieve user by id. ID=" + id, e);
+            throw new EntityNotFoundException("Can't to retrieve user by id. ID=" + id);
         }
         return user;
     }
@@ -108,10 +104,27 @@ public class UserRepositoryImpl implements UserRepository {
         return true;
     }
 
+    @Override
+    public void deleteAll() {
+        findAll().forEach(user -> deleteById(user.getId()));
+    }
+
     private void checkAffectedRowsNumber(int recordCount, int expectedCount) {
         if (recordCount != expectedCount) {
             throw new RuntimeException("Excepted to change at least " + expectedCount + " row. "
                 + "But changed " + recordCount + " rows.");
+        }
+    }
+
+    private User toUser(ResultSet requestResult) {
+        try {
+            Long id = requestResult.getLong(ID);
+            String email = requestResult.getString(EMAIL);
+            String phoneNumber = requestResult.getString(PHONENUMBER);
+            String password = requestResult.getString(PASSWORD);
+            return new User(id, email, phoneNumber, password);
+        } catch (SQLException e) {
+            throw new RuntimeException("Can't parse user data from resultSet", e);
         }
     }
 
@@ -123,7 +136,7 @@ public class UserRepositoryImpl implements UserRepository {
             String password = requestResult.getString(PASSWORD);
             return new UserResponseDto(id, email, phoneNumber, password);
         } catch (SQLException e) {
-            throw new RuntimeException("Can't parse user " + "data from resultSet", e);
+            throw new RuntimeException("Can't parse user data from resultSet", e);
         }
     }
 }
